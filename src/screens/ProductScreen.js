@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Container,
@@ -10,10 +10,22 @@ import {
   Button,
 } from "react-bootstrap";
 import Rating from "../components/Rating";
-import products from "../products";
+// import products from "../products";
+import axios from "axios";
 
 const ProductScreen = ({ match }) => {
-  const product = products.find((product) => product._id === match.params.id);
+  const [product, setProduct] = useState([]);
+  useEffect(() => {
+    const getProduct = async () => {
+      const res = await axios.get(
+        `http://localhost:5000/api/products/${match.params.id}`
+      );
+      setProduct(res.data);
+      console.log(res.data);
+    };
+    getProduct();
+  }, [match.params.id]);
+  // const product = products.find((product) => product._id === match.params.id);
   return (
     <>
       <Link className="btn btn-light my-3" to="/">
@@ -58,7 +70,11 @@ const ProductScreen = ({ match }) => {
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item className="d-grid">
-                <Button className="btn" type="button">
+                <Button
+                  className="btn"
+                  type="button"
+                  disabled={product.countInStock === 0}
+                >
                   Add To Cart
                 </Button>
               </ListGroup.Item>
