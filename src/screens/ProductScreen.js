@@ -16,12 +16,16 @@ import { singleProduct } from "../actions/productActions";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 
-const ProductScreen = ({ match }) => {
-  const [qty, setQty] = useState(0);
+const ProductScreen = ({ history, match }) => {
+  const [qty, setQty] = useState(1);
   const dispatch = useDispatch();
   const productDetail = useSelector((state) => state.productDetail);
   const { loading, error, product } = productDetail;
-  console.log(product ? product : null);
+  const addToCartHandler = () => {
+    history.push(`/cart/${match.params.id}/?qty=${qty}`);
+    console.log(history);
+  };
+
   useEffect(() => {
     dispatch(singleProduct(match.params.id));
   }, [match, dispatch]);
@@ -86,9 +90,9 @@ const ProductScreen = ({ match }) => {
                           value={qty}
                           onChange={(e) => setQty(e.target.value)}
                         >
-                          {[...Array(product.countInStock).keys()].map((j) => (
-                            <option key={j + 1} value={j + 1}>
-                              {j + 1}
+                          {[...Array(product.countInStock).keys()].map((x) => (
+                            <option key={x + 1} value={x + 1}>
+                              {x + 1}
                             </option>
                           ))}
                         </Form.Control>
@@ -101,6 +105,7 @@ const ProductScreen = ({ match }) => {
                     className="btn"
                     type="button"
                     disabled={product.countInStock === 0}
+                    onClick={addToCartHandler}
                   >
                     Add To Cart
                   </Button>
