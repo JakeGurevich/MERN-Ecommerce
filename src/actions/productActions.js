@@ -18,8 +18,8 @@ export const listProducts = () => async (dispatch) => {
     dispatch({
       type: PRODUCT_LIST_FAIL,
       payload:
-        error.responce && error.responce.data.message
-          ? error.responce.data.message
+        error.response && error.response.data.message
+          ? error.response.data.message
           : error.message,
     });
   }
