@@ -14,21 +14,31 @@ export const cartReducer = (
       const itemToAdd = action.payload;
       console.log(itemToAdd);
       console.log(state.cartItems);
-      const existItem = state.cartItems.find((x) => x.id === itemToAdd.id);
+      const existItem = state.cartItems.find(
+        (item) => item.productId === itemToAdd.productId
+      );
       if (existItem) {
         return {
           ...state,
           cartItems: state.cartItems.map((item) =>
-            item.id === itemToAdd.id ? itemToAdd : item
+            item.productId === itemToAdd.productId ? itemToAdd : item
           ),
         };
       } else {
-        return { ...state, cartItems: [...state.cartItems, itemToAdd] };
+        return {
+          ...state,
+          cartItems: [...state.cartItems, itemToAdd],
+        };
       }
     case CART_REMOVE_ITEM:
       const id = action.payload;
-      const updatedItems = state.cartItems.filter((item) => item.id !== id);
-      return { ...state, cartItems: [...updatedItems] };
+      const updatedItems = state.cartItems.filter(
+        (item) => item.productId === id
+      );
+      return {
+        ...state,
+        cartItems: [...updatedItems],
+      };
 
     case SAVE_SHIPPING_ADDRESS:
       return {
