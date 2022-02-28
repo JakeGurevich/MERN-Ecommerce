@@ -33,7 +33,7 @@ const CartScreen = ({ match, location, history }) => {
   return (
     <Row>
       <Col md={8}>
-        <h1>Shopping Cart</h1>
+        <h1 className="text-center mb-3"> Shopping Cart</h1>
         {cartItems.length === 0 ? (
           <Message>
             Your cart is empty <Link to="/">Go back</Link>
@@ -42,13 +42,13 @@ const CartScreen = ({ match, location, history }) => {
           <ListGroup variant="flush">
             {console.log(cartItems)}
             {cartItems.map((item) => (
-              <ListGroup.Item key={item.id}>
+              <ListGroup.Item key={item.productId}>
                 <Row>
                   <Col md={2}>
                     <Image src={item.image} alt={item.name} fluid rounded />
                   </Col>
                   <Col md={3}>
-                    <Link to={`/product/${item.id}`}>{item.name}</Link>
+                    <Link to={`/product/${item.productId}`}>{item.name}</Link>
                   </Col>
                   <Col md={2}>{item.price}</Col>
                   <Col md={2}>
@@ -56,7 +56,9 @@ const CartScreen = ({ match, location, history }) => {
                       as="select"
                       value={item.qty}
                       onChange={(e) =>
-                        dispatch(addToCart(item.id, Number(e.target.value)))
+                        dispatch(
+                          addToCart(item.productId, Number(e.target.value))
+                        )
                       }
                     >
                       {[...Array(item.countInStock).keys()].map((x) => (
@@ -70,7 +72,7 @@ const CartScreen = ({ match, location, history }) => {
                     <Button
                       type="button"
                       variant="light"
-                      onClick={(e) => removeFromCartHandler(item.id)}
+                      onClick={(e) => removeFromCartHandler(item.productId)}
                     >
                       <i className="fas fa-trash"></i>
                     </Button>
@@ -94,7 +96,7 @@ const CartScreen = ({ match, location, history }) => {
                 .reduce((acc, item) => acc + item.qty * item.price, 0)
                 .toFixed(2)}
             </ListGroup.Item>
-            <ListGroup.Item>
+            <ListGroup.Item className="d-grid ">
               <Button
                 type="button"
                 className="btn-block"
