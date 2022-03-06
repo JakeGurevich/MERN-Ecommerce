@@ -2,19 +2,19 @@ import React, { useState, useEffect, useMemo } from "react";
 import { LinkContainer } from "react-router-bootstrap";
 import { Table, Button, Form, Row, Col, InputGroup } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import usersFromData from "../data/users";
+
 import { useSort } from "../hooks/useSort";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import { getUserList, deleteUser } from "../actions/userActions";
+import { listProducts } from "../actions/productActions";
 
-const UsersListScreen = ({ history }) => {
+const ProductListScreen = ({ history }) => {
   const [selectedFilter, setSelectedFilter] = useState("name");
   const [searchQuery, setSearchQuery] = useState("");
 
   const dispatch = useDispatch();
-  const userList = useSelector((state) => state.getUsers);
-  const { loading, users, error } = userList;
+  const productList = useSelector((state) => state.productList);
+  const { loading, products, error } = productList;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -22,25 +22,29 @@ const UsersListScreen = ({ history }) => {
   const userDelete = useSelector((state) => state.userDelete);
   const { success, error: errorDelete } = userDelete;
 
-  const sortedAndSearchedUsers = useSort(users, selectedFilter, searchQuery);
+  const sortedAndSearchedProducts = useSort(
+    products,
+    selectedFilter,
+    searchQuery
+  );
 
   const deleteHandler = (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
-      dispatch(deleteUser(id));
+      // dispatch(deleteUser(id));
       console.log("user deleted");
     }
   };
 
   useEffect(() => {
     if (userInfo && userInfo.isAdmin) {
-      dispatch(getUserList());
+      dispatch(listProducts());
     } else {
       history.push("/login");
     }
-  }, [dispatch, history, userInfo, success]);
+  }, [dispatch, history, userInfo]);
   return (
     <>
-      <h1 className="text-center">Users</h1>
+      <h1 className="text-center">Products</h1>
 
       {loading ? (
         <Loader />
@@ -61,8 +65,8 @@ const UsersListScreen = ({ history }) => {
                   <option disabled value="all">
                     Sort by :
                   </option>
-                  <option value="name">Name</option>
-                  <option value="email">Email</option>
+                  <option value="name">Name of Product</option>
+                  <option value="category">Category</option>
                 </Form.Control>
               </InputGroup>
             </Col>
@@ -85,7 +89,7 @@ const UsersListScreen = ({ history }) => {
                   onClick={(e) => {
                     e.preventDefault();
 
-                    console.log(sortedAndSearchedUsers);
+                    console.log(sortedAndSearchedProducts);
                   }}
                 >
                   Search
@@ -93,50 +97,40 @@ const UsersListScreen = ({ history }) => {
               </InputGroup>
             </Col>
           </Row>
-          {sortedAndSearchedUsers.length === 0 ? (
-            <h2 className="text-center text-primary">Users not found</h2>
+          {sortedAndSearchedProducts.length === 0 ? (
+            <h2 className="text-center text-primary">Products not found</h2>
           ) : (
             <Table striped bordered hover responsive className="table-sm">
               <thead>
                 <tr>
                   <th>ID</th>
                   <th>NAME</th>
-                  <th>EMAIL</th>
-                  <th>ADMIN</th>
-                  <th></th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Qty</th>
                 </tr>
               </thead>
               <tbody>
-                {sortedAndSearchedUsers.map((user, i) => (
+                {sortedAndSearchedProducts.map((prod, i) => (
                   <tr key={i}>
                     <td>{i + 1}</td>
-                    <td>{user.name}</td>
+                    <td>{prod.name}</td>
+                    <td>{prod.category}</td>
+                    <td>{prod.price}</td>
+                    <td>{prod.countInStock}</td>
                     <td>
-                      <a href={`mailto:${user.email}`}>{user.email}</a>
-                    </td>
-                    <td>
-                      {user.isAdmin ? (
-                        <i
-                          className="fa fa-check"
-                          style={{ color: "green" }}
-                        ></i>
-                      ) : (
-                        <i className="fa fa-times" style={{ color: "red" }}></i>
-                      )}
-                    </td>
-                    <td>
-                      <LinkContainer to={`/admin/user/${user._id}/edit`}>
+                      <LinkContainer to={`/admin/user/${prod._id}/edit`}>
                         <Button variant="light" className="btn-sm">
                           <i className="fa fa-edit"></i>
                         </Button>
                       </LinkContainer>
-                      <Button
+                      {/* <Button
                         variant="danger"
                         className="btn-sm"
-                        onClick={() => deleteHandler(user._id)}
+                        onClick={() => deleteHandler()}
                       >
                         <i className="fa fa-trash"></i>
-                      </Button>
+                      </Button> */}
                     </td>
                   </tr>
                 ))}
@@ -149,4 +143,4 @@ const UsersListScreen = ({ history }) => {
   );
 };
 
-export default UsersListScreen;
+export default ProductListScreen;
