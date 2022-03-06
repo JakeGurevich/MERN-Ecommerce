@@ -10,15 +10,17 @@ export const useSort = (data, selectedFilter, searchQuery) => {
     } else if (data) {
       return data;
     }
-  }, [selectedFilter]);
+  }, [selectedFilter, data]);
 
   const sortedAndSearchedData = useMemo(() => {
-    console.log("sortedAndSearched");
     if (searchQuery) {
-      return sortedData.filter((el) => el.name.includes(searchQuery));
+      return sortedData.filter((el) =>
+        el.name.toLowerCase().includes(searchQuery)
+      );
     } else {
       return sortedData;
     }
   }, [searchQuery, sortedData]);
+  console.log(sortedAndSearchedData);
   return sortedAndSearchedData;
 };
